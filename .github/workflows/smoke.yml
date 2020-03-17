@@ -1,0 +1,17 @@
+name: Smoke Test
+
+on:
+    push:
+        branches:
+            - master
+
+jobs:
+    build:
+        runs-on: macos-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@master
+
+            - name: Deploy
+              run: make
