@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# shellcheck disable=SC2139
+
 # Allow aliases to be with sudo
 alias sudo='nocorrect sudo '
 

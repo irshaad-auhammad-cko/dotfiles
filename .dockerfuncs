@@ -5,15 +5,15 @@
 dc_cleanup() {
     local containers
     mapfile -t containers < <(docker ps -aq 2>/dev/null)
-    docker rm $"{containers[@]}" 2>/dev/null
+    docker rm "${containers[@]}" 2>/dev/null
 
     local volumes
     mapfile -t volumes < <(docker ps --filter status=exited -q 2>/dev/null)
-    docker rm -v $"{volumes[@]}" 2>/dev/null
+    docker rm -v "${volumes[@]}" 2>/dev/null
 
     local images
     mapfile -t images < <(docker images --filter dangling=true -q 2>/dev/null)
-    docker rmi $"{images[@]}" 2>/dev/null
+    docker rmi "${images[@]}" 2>/dev/null
 }
 
 del_stopped() {
@@ -65,9 +65,9 @@ consul() {
 
     docker run -d \
     --restart always \
-    -p 8500:8500
+    -p 8500:8500 \
     -p 8600:8600/udp \
-    --name consul
+    --name consul \
     consul agent \
     -server \
     -ui \
@@ -83,8 +83,8 @@ redis() {
     docker run -d \
     --restart always \
     -v /docker/redis-data:/data \
-    -p 6379:6379
-    --name redis
+    -p 6379:6379 \
+    --name redis \
     redis \
     redis-server \
     --appendonly yes

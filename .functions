@@ -31,7 +31,7 @@ trash() {
 
 # Create a .tar.gz archive, using `zopfli`, `pigz` or `gzip` for compression
 targz() {
-	local tmpFile="${@%/}.tar";
+	local tmpFile="${1%/}.tar"
 	tar "${tmpFile}" --exclude=".DS_Store" "${@}" || return 1;
 
 	size=$(
@@ -65,19 +65,19 @@ targz() {
 
 # Extract most know archives with one command
 extract() {
-	if [ -f $1 ]; then
-		case $1 in
-		*.tar.bz2) tar xjf $1 ;;
-		*.tar.gz) tar xzf $1 ;;
-		*.bz2) bunzip2 $1 ;;
-		*.rar) unrar e $1 ;;
-		*.gz) gunzip $1 ;;
-		*.tar) tar xf $1 ;;
-		*.tbz2) tar xjf $1 ;;
-		*.tgz) tar xzf $1 ;;
-		*.zip) unzip $1 ;;
-		*.Z) uncompress $1 ;;
-		*.7z) 7z x $1 ;;
+	if [ -f "$1" ]; then
+		case "$1" in
+		*.tar.bz2) tar xjf "$1" ;;
+		*.tar.gz) tar xzf "$1" ;;
+		*.bz2) bunzip2 "$1" ;;
+		*.rar) unrar e "$1" ;;
+		*.gz) gunzip "$1" ;;
+		*.tar) tar xf "$1" ;;
+		*.tbz2) tar xjf "$1" ;;
+		*.tgz) tar xzf "$1" ;;
+		*.zip) unzip "$1" ;;
+		*.Z) uncompress "$1" ;;
+		*.7z) 7z x "$1" ;;
 		*) echo "'$1' cannot be extracted via extract()" ;;
 		esac
 	else
@@ -122,11 +122,13 @@ man() {
 
 # UTF-8-encode a string of Unicode symbols
 escape() {
-	printf "\\\x%s" $(printf "$@" | xxd -p -c1 -u);
+	local args
+	mapfile -t args < <(printf "%s" "$*" | xxd -p -c1 -u)
+	printf "\\\\x%s" "${args[@]}"
 	# print a newline unless we’re piping the output to another program
 	if [ -t 1 ]; then
 		echo ""; # newline
-	fi;
+	fi
 }
 
 # Decode \x{ABCD}-style Unicode escape sequences
@@ -169,11 +171,13 @@ getcertnames() {
 	echo "Testing ${domain}…";
 	echo ""; # newline
 
-	local tmp=$(echo -e "GET / HTTP/1.0\nEOT" \
+    local tmp
+	tmp=$(echo -e "GET / HTTP/1.0\nEOT" \
 		| openssl s_client -connect "${domain}:443" -servername "${domain}" 2>&1);
 
 	if [[ "${tmp}" = *"-----BEGIN CERTIFICATE-----"* ]]; then
-		local certText=$(echo "${tmp}" \
+        local certText
+		certText=$(echo "${tmp}" \
 			| openssl x509 -text -certopt "no_aux, no_header, no_issuer, no_pubkey, \
 			no_serial, no_sigdump, no_signame, no_validity, no_version");
 		echo "Common Name:";
@@ -238,7 +242,7 @@ ql() {
 }
 
 # Start an HTTP server from a directory, optionally specifying the port
-http_server() {
+httpserver() {
 	local port="${1:-8000}"
 	sleep 1 && open "http://localhost:${port}/" &
 	# Set the default Content-Type to `text/plain` instead of `application/octet-stream`
@@ -248,7 +252,7 @@ http_server() {
 
 
 # Generate SSH RSA keys
-ssh_key_gen() {
+sshkeygen() {
 
 	echo "What's the name of the Key (no spaced please) ? ";
 	read -r name;
@@ -256,9 +260,9 @@ ssh_key_gen() {
 	echo "What's the email associated with it? ";
 	read -r email;
 
-	ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/$name -C "$email"
-	ssh-add ~/.ssh/$name;
-	pbcopy < ~/.ssh/$name.pub;
+	ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/"$name" -C "$email"
+	ssh-add ~/.ssh/"$name";
+	pbcopy < ~/.ssh/"$name".pub;
 
 	echo "SSH Key copied in your clipboard";
 }
@@ -267,7 +271,7 @@ ssh_key_gen() {
 # the `.git` directory, listing directories first. The output gets piped into
 # `less` with options to preserve color and line numbers, unless the output is
 # small enough for one screen.
-function tre() {
+tre() {
 	tree -aC -I '.git|node_modules|bower_components' --dirsfirst "$@" | less -FRnX;
 }
 
@@ -276,9 +280,9 @@ function tre() {
 curlhammer () {
   bot "about to hammer $1 with $2 curls ⇒";
   echo "curl -k -s -D - $1 -o /dev/null | grep 'HTTP/1.1' | sed 's/HTTP\/1.1 //'"
-  for i in {1..$2}
+  for ((i=1; i<="$2"; i++))
   do
-    curl -k -s -D - $1 -o /dev/null | grep 'HTTP/1.1' | sed 's/HTTP\/1.1 //'
+    curl -k -s -D - "$1" -o /dev/null | grep 'HTTP/1.1' | sed 's/HTTP\/1.1 //'
   done
   bot "done"
 }
@@ -289,10 +293,10 @@ curlhammer () {
 curlheader() {
   if [[ -z "$2" ]]; then
     echo "curl -k -s -D - $1 -o /dev/null"
-    curl -k -s -D - $1 -o /dev/null:
+    curl -k -s -D - "$1" -o /dev/null:
   else
     echo "curl -k -s -D - $2 -o /dev/null | grep $1:"
-    curl -k -s -D - $2 -o /dev/null | grep $1:
+    curl -k -s -D - "$2" -o /dev/null | grep "$1":
   fi
 }
 
@@ -309,8 +313,8 @@ time_starttransfer:  %{time_starttransfer}\n\
         time_total:  %{time_total}\n" -o /dev/null -s "$1"
 }
 
-# httpDebug: Function to download a web page and show info on what took time
-httpDebug() {
+# httpdebug: Function to download a web page and show info on what took time
+httpdebug() {
     /usr/bin/curl "$@" -o /dev/null -w "dns: %{time_namelookup} connect: %{time_connect} pretransfer: %{time_pretransfer} starttransfer: %{time_starttransfer} total: %{time_total}\\n";
 }
 
@@ -365,7 +369,7 @@ repo() {
 
 	open "$url" &> /dev/null || (echo "Using $(type open) to open URL failed." && exit 1);
 }
-
+# shellcheck disable=SC2004
 matrix() {
 	echo -e "\\e[1;40m" ; clear ; while :; do echo $LINES $COLUMNS $(( $RANDOM % $COLUMNS)) $(( $RANDOM % 72 )) ;sleep 0.05; done|awk '{ letters="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()"; c=$4; letter=substr(letters,c,1);a[$3]=0;for (x in a) {o=a[x];a[x]=a[x]+1; printf "\033[%s;%sH\033[2;32m%s",o,x,letter; printf "\033[%s;%sH\033[1;37m%s\033[0;0H",a[x],x,letter;if (a[x] >= $1) { a[x]=0; } }}'
 }

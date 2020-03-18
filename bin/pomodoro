@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # A simple shell script to use as a pomodoro app.
 # The first argument is the focus time length.
