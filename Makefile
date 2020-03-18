@@ -10,7 +10,7 @@ bin: ## install the bin directory files
 	done
 
 .PHONY: setup
-setup: ## setup homebrew oh-my-zsh & vim
+setup: ## setup homebrew, oh-my-zsh & vim
 
 	# install homebrew & homebrew packages
 	(sudo xcode-select --install && \
@@ -28,10 +28,10 @@ setup: ## setup homebrew oh-my-zsh & vim
 
 .PHONY: dotfiles
 dotfiles: ## install the dotfiles
-	for file in $(shell find $(CURDIR) -name "*." -not -name ".git" -not -name ".*.swp"); \
+	for file in $(shell find $(CURDIR) -name "*." -not -name ".git" -not -name ".*.swp"); do \
 		f=$$(basename $$file); \
 		ln -sfn $$file $(HOME)/$$f; \
-	done;
+	done; \
 
 	ln -fn $(CURDIR)/gitignore $(HOME)/.gitignore;
 	git update-index --skip-worktree $(CURDIR)/.gitconfig;
