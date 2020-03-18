@@ -28,7 +28,7 @@ setup: ## setup homebrew, oh-my-zsh & vim
 
 .PHONY: dotfiles
 dotfiles: ## install the dotfiles
-	for file in $(shell find $(CURDIR) -name "*." -not -name ".git" -not -name ".*.swp"); do \
+	for file in $(shell find $(CURDIR) -name "*." -not -name ".git" -not -name ".github" -not -name ".*.swp"); do \
 		f=$$(basename $$file); \
 		ln -sfn $$file $(HOME)/$$f; \
 	done; \
