@@ -1,6 +1,6 @@
 .PHONY: all
 all:  ## installs the bin and the dotfiles.
-	bin setup dotfiles
+	 setup bin dotfiles
 
 .PHONY: bin
 bin: ## install the bin directory files
@@ -14,7 +14,7 @@ setup: ## setup homebrew, oh-my-zsh & vim
 
 	# install homebrew & homebrew packages
 	(sudo xcode-select --install && \
-	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)" && \
+	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | sh && \
 	brew bundle)
 
 	# install vimrc & vim-airline
@@ -23,12 +23,13 @@ setup: ## setup homebrew, oh-my-zsh & vim
 	sh $(HOME)/.vim_runtime/install_awesome_vimrc.sh)
 
 	# install oh-my-zsh & spaceship-promp
-	(sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
+	(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh && \
+	git clone https://github.com/denysdovhan/spaceship-prompt.git $(HOME)/.oh-my-zsh/custom/themes/spaceship-prompt && \
 	ln -s $(HOME)/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme $(HOME)/.oh-my-zsh/custom/themes/spaceship.zsh-theme)
 
 .PHONY: dotfiles
 dotfiles: ## install the dotfiles
-	for file in $(shell find $(CURDIR) -name "*." -not -name ".git" -not -name ".github" -not -name ".*.swp"); do \
+	for file in $(shell find $(CURDIR) -name ".*" -not -name ".git" -not -name ".github" -not -name ".*.swp"); do \
 		f=$$(basename $$file); \
 		ln -sfn $$file $(HOME)/$$f; \
 	done; \
