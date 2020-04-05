@@ -73,7 +73,7 @@ consul() {
     -ui \
     -node=consul-server \
     -bootstrap-expect=1 \
-    -dc neverland \
+    -datacenter neverland \
     -client=0.0.0.0
 }
 
