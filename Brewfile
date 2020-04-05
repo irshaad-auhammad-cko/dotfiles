@@ -9,6 +9,7 @@ cask_args appdir: "/Applications"
 brew "annie"
 brew "axel"
 brew "bash"
+brew "bash-completion@2"
 brew "clang-format"
 brew "coreutils"
 brew "curl", args: ["with-nghttp2"]
@@ -37,8 +38,6 @@ brew "tmux"
 brew "tree"
 brew "vim", args: ["with-override-system-vi"]
 brew "wget"
-brew "zsh"
-brew "zsh-completions"
 
 cask "cleanmymac"
 cask "docker"

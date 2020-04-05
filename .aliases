@@ -3,7 +3,7 @@
 # shellcheck disable=SC2139
 
 # Allow aliases to be with sudo
-alias sudo='nocorrect sudo '
+alias sudo='sudo '
 
 # Reload the shell (i.e. invoke as a login shell)
 alias reload='exec ${SHELL} -l'

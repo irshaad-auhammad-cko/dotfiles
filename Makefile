@@ -22,10 +22,8 @@ setup: ## setup homebrew, oh-my-zsh & vim
 	git clone https://github.com/vim-airline/vim-airline.git $(HOME)/.vim_runtime/my_plugins/vim_airline && \
 	sh $(HOME)/.vim_runtime/install_awesome_vimrc.sh)
 
-	# install oh-my-zsh & spaceship-promp
-	(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh && \
-	git clone https://github.com/denysdovhan/spaceship-prompt.git $(HOME)/.oh-my-zsh/custom/themes/spaceship-prompt && \
-	ln -s $(HOME)/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme $(HOME)/.oh-my-zsh/custom/themes/spaceship.zsh-theme)
+	# install the starship prompt for bash
+	curl -fsSL https://starship.rs/install.sh | bash
 
 .PHONY: dotfiles
 dotfiles: ## install the dotfiles
