@@ -8,13 +8,6 @@ alias sudo='sudo '
 # Reload the shell (i.e. invoke as a login shell)
 alias reload='exec ${SHELL} -l'
 
-# Detect which flavor of ls is in use
-if ls --color > /dev/null 2>&1; then # GNU ls
-    colorflag="--color"
-else # macOS ls
-    colorflag="-G"
-fi
-
 # Generic aliases
 alias c='clear'
 alias console='tee -a ~/console.log'
@@ -24,12 +17,12 @@ alias du="du -h"
 alias finder='open -a Finder ./'
 alias grep="grep --color=auto"
 alias h='history'
-alias la='ls -FlAhp ${colorflag}'
+alias la="ls -FlAhp --color"
 alias less='less -R'
 alias locale='locale -a | grep UTF-8'
 alias lr='ls -R | grep ":$" | sed -e '\''s/:$//'\'' -e '\''s/[^-][^\/]*\//--/g'\'' -e '\''s/^/   /'\'' -e '\''s/-/|/'\'' | less'
-alias ls='ls -Flhp ${colorflag}'
-alias lsd="ls -lhF ${colorflag} | grep --color=never '^d'"
+alias ls="ls -Flhp --color"
+alias lsd="ls -lhF --color | grep --color=never '^d'"
 alias mkdir='mkdir -pv'
 alias mv='mv -i'
 alias p='pwd'
