@@ -10,7 +10,7 @@ bin: ## install the bin directory files
 	done
 
 .PHONY: setup
-setup: ## setup homebrew, oh-my-zsh & vim
+setup: ## setup homebrew, starship bash prompt & vim
 
 	# install homebrew & homebrew packages
 	(sudo xcode-select --install && \
@@ -23,7 +23,8 @@ setup: ## setup homebrew, oh-my-zsh & vim
 	sh $(HOME)/.vim_runtime/install_awesome_vimrc.sh)
 
 	# install the starship prompt for bash
-	curl -fsSL https://starship.rs/install.sh | bash
+	curl -fsSL https://starship.rs/install.sh | bash;
+	mkdir -p ~/.config && cp .config/starship.toml ~/.config
 
 .PHONY: dotfiles
 dotfiles: ## install the dotfiles
@@ -56,6 +57,3 @@ shellcheck: ## Runs the shellcheck tests on the scripts.
 
 help:   ## Show this help.
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
-
-
-
