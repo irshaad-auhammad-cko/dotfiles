@@ -16,8 +16,8 @@ dcleanup() {
     docker rmi "${images[@]}" 2>/dev/null
 }
 
-docker_ps(){
-docker ps -a --format 'table {{.ID}}\t{{.Names}}\t{{.Ports}}\t{{.Status}}'
+dps() {
+    docker ps -a --format 'table {{.ID}}\t{{.Names}}\t{{.Ports}}\t{{.Status}}'
 }
 
 del_stopped() {
