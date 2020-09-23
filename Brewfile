@@ -15,6 +15,7 @@ brew "clang-format"
 brew "coreutils"
 brew "curl", args: ["with-nghttp2"]
 brew "findutils"
+brew "gh"
 brew "git"
 brew "git-lfs"
 brew "gitversion"
