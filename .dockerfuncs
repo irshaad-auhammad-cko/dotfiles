@@ -116,8 +116,11 @@ rethinkdb() {
     del_stopped rethinkdb
 
     docker run -d \
-        --restart always
-        --name rethinkdb
+        --restart always \
+        --name rethinkdb \
+        -p 28015:28015 \
+        -p 29015:29015 \
+        -p 8080:8080 \
         -v "$HOME/.rethinkdb_data:/data" \
         rethinkdb
 }
