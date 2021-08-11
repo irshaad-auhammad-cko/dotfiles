@@ -5,5 +5,5 @@ disabled = true
 only_with_files = true
 
 [hostname]
-prefix = "⟪"
-suffix = "⟫"
+format = "on [$homename](bold red)"
+disabled = false
