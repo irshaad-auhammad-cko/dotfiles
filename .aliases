@@ -10,14 +10,16 @@ alias reload='exec ${SHELL} -l'
 
 # Generic aliases
 alias c='clear'
+alias cat='bat --paging=never'
 alias console='tee -a ~/console.log'
 alias cp='cp -i'
 alias cwd='pwd | tr -d "\r\n" | pbcopy'
-alias du="du -h"
+alias du="dust"
+alias find="fd"
 alias finder='open -a Finder ./'
-alias grep="grep --color=auto"
+alias grep="rg"
 alias h='history'
-alias la="ls -FlAhp --color"
+alias la="exa -abghHli"
 alias less='less -R'
 alias locale='locale -a | grep UTF-8'
 alias lr='ls -R | grep ":$" | sed -e '\''s/:$//'\'' -e '\''s/[^-][^\/]*\//--/g'\'' -e '\''s/^/   /'\'' -e '\''s/-/|/'\'' | less'
@@ -39,12 +41,12 @@ alias zap='rm -i'
 
 # Quicker navigation
 alias ~='cd ~'
-alias ..='cd ../'                   # Go back 1 directory level
-alias ...='cd ../../'               # Go back 2 directory levels
-alias .3='cd ../../../'             # Go back 3 directory levels
-alias .4='cd ../../../../'          # Go back 4 directory levels
-alias .5='cd ../../../../../'       # Go back 5 directory levels
-alias .6='cd ../../../../../../'    # Go back 6 directory levels
+alias ..='cd ../'                # Go back 1 directory level
+alias ...='cd ../../'            # Go back 2 directory levels
+alias .3='cd ../../../'          # Go back 3 directory levels
+alias .4='cd ../../../../'       # Go back 4 directory levels
+alias .5='cd ../../../../../'    # Go back 5 directory levels
+alias .6='cd ../../../../../../' # Go back 6 directory levels
 
 # Get macOS Software Updates, and update installed Homebrew, npm, and their installed packages
 alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cu --all; brew cleanup; brew cu --cleanup; brew doctor; npm install npm -g; npm update -g'
@@ -92,7 +94,7 @@ alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET
 alias sniff="sudo ngrep -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"
 
 # Limit Ping to 5 ECHO_REQUEST packets
-alias ping='ping -c 5'
+alias ping='gping'
 
 # wget with resume
 alias wget='wget -c'
