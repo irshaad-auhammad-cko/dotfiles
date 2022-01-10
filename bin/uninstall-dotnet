@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-#
+set -euo pipefail
+##############################################################################
 # Copyright (c) .NET Foundation and contributors. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project root for full license information.
-#
+# Licensed under the MIT license. See LICENSE file in the project root
+# for full license information.
+##############################################################################
 
 current_userid=$(id -u)
 
@@ -15,13 +17,12 @@ dotnet_pkg_name_suffix="com.microsoft.dotnet"
 dotnet_install_root="/usr/local/share/dotnet"
 dotnet_path_file="/etc/paths.d/dotnet"
 
-remove_dotnet_pkgs(){
+remove_dotnet_pkgs() {
     # installed_pkgs=($(pkgutil --pkgs | grep $dotnet_pkg_name_suffix))
     local installed_pkgs
     mapfile -t installed_pkgs < <(pkgutil --pkgs | grep $dotnet_pkg_name_suffix)
 
-    for i in "${installed_pkgs[@]}"
-    do
+    for i in "${installed_pkgs[@]}"; do
         echo "Removing dotnet component - \"$i\"" >&2
         pkgutil --force --forget "$i"
     done
@@ -29,7 +30,7 @@ remove_dotnet_pkgs(){
 
 remove_dotnet_pkgs
 if ! remove_dotnet_pkgs; then
-     echo "Failed to remove dotnet packages." >&2 && exit 1
+    echo "Failed to remove dotnet packages." >&2 && exit 1
 fi
 
 echo "Deleting install root - $dotnet_install_root" >&2

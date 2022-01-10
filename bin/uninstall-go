@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 current_userid=$(id -u)
 
@@ -15,9 +16,9 @@ echo ""
 read -p -r "Are you sure you want to proceed? [Y/n] " input
 
 if [[ $input =~ ^[Yy]$ ]]; then
-  rm -rf /usr/local/go
-  rm /etc/paths.d/go
-  echo "Golang was successfully removed from the system."
+    rm -rf /usr/local/go
+    rm /etc/paths.d/go
+    echo "Golang was successfully removed from the system."
 else
     echo "Aborting..."
 fi
