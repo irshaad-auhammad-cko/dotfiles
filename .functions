@@ -355,3 +355,102 @@ repo() {
 matrix() {
 	echo -e "\\e[1;40m" ; clear ; while :; do echo $LINES $COLUMNS $(( $RANDOM % $COLUMNS)) $(( $RANDOM % 72 )) ;sleep 0.05; done|awk '{ letters="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()"; c=$4; letter=substr(letters,c,1);a[$3]=0;for (x in a) {o=a[x];a[x]=a[x]+1; printf "\033[%s;%sH\033[2;32m%s",o,x,letter; printf "\033[%s;%sH\033[1;37m%s\033[0;0H",a[x],x,letter;if (a[x] >= $1) { a[x]=0; } }}'
 }
+
+totp(){
+    oathtool --base32 --totp $OKTA_TOTP
+}
+
+sqspoll(){
+	echo "checking sqs...⏳";
+	awslocal sqs receive-message \
+    	--queue-url http://localhost:4566/000000000000/${1} \
+    	--max-number-of-messages 10 \
+    	--message-attribute-names "All" \
+    	--visibility-timeout 1 \
+    	--wait-time-seconds 15;
+
+	echo "checking sqs dlq...⏳";
+	awslocal sqs receive-message \
+    	--queue-url http://localhost:4566/000000000000/${1}-dead-letter \
+    	--max-number-of-messages 10 \
+    	--message-attribute-names "All" \
+    	--visibility-timeout 1 \
+    	--wait-time-seconds 15;
+}
+
+sqspurge(){
+	awslocal sqs purge-queue \
+	    --queue-url http://localhost:4566/000000000000/${1};
+
+	awslocal sqs purge-queue \
+	    --queue-url http://localhost:4566/000000000000/${1}-dead-letter;
+}
+
+ghapprove(){
+	gh pr review $1 --approve;
+}
+
+awscli(){
+	domain=checkout.okta.com
+	okta_app=0oar3nsvk7VtIvsL3357
+	aws_okta_app=0oa423kknpZCS07GJ357
+
+	echo "
+	1- Playground
+	2- Dev
+	3- QA
+	4- Sbox
+	5- Prod
+	6- Management
+	"
+
+	echo -n "Which account would you like to connect to? "
+	read account_id_number
+
+	account_id=0
+
+	case $account_id_number in
+  	1)
+		echo "Playground"
+    		account_id=528130383285
+    	;;
+  	2)
+    		echo "Dev"
+    		account_id=851429951072
+    	;;
+  	3)
+    		echo "QA"
+    		account_id=711533748762
+    	;;
+  	4)
+    		echo "Sbox"
+    		account_id=686496747715
+    	;;
+  	5)
+    		echo "Prod"
+    		account_id=851392519502
+    	;;
+  	6)
+    		echo "Management"
+    		account_id=791259062566
+    	;;
+  	*)
+    		echo "Unknown account id. Defaulting to Management..."
+    		account_id=791259062566
+			account_id_number=6
+    	;;
+	esac
+
+	okta-aws-cli --org-domain $domain --oidc-client-id $okta_app --aws-acct-fed-app-id $aws_okta_app -b -z -s 43200 -i arn:aws:iam::$account_id:saml-provider/okta;
+
+	if [ $account_id_number -eq 6 ]
+	then
+		echo "Logging into AWS CodeArtifact...";
+		aws codeartifact login --region eu-west-1 --tool dotnet --repository cko-packages --domain cko-packages;
+
+		TOKEN=$(aws codeartifact get-authorization-token --domain "cko-packages" --domain-owner $account_id --query "authorizationToken" --region eu-west-1 --output text);
+
+		dotnet nuget update source "cko-packages/cko-packages" --password $TOKEN --username aws --store-password-in-clear-text --configfile ~/.nuget/NuGet/NuGet.config;
+	fi
+}
+
