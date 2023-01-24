@@ -101,6 +101,19 @@ prometheus() {
         prom/prometheus
 }
 
+redis() {
+    del_stopped redis
+
+    docker volume create redis_data
+
+    docker run -d \
+        --restart always \
+        -v redis_data:/data \
+        -p 6379:6379 \
+        --name redis \
+        redis --save 60 1 --loglevel warning
+}
+
 sourcegraph() {
     docker run -d \
         --restart always \
