@@ -29,7 +29,7 @@ setup: ## Install homebrew, starship and configure vim
 	@[ -f "/usr/bin/xcodebuild" ] || xcode-select --install;
 
 	# check if homebrew is installed && install brew packages
-	@[ -f "/usr/local/bin/brew" ] || (curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | sh);
+	@[ -f "/opt/homebrew/bin/brew" ] || (/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)");
 	brew bundle;
 
 	# install vim-plug
@@ -38,6 +38,9 @@ setup: ## Install homebrew, starship and configure vim
 
 	# install starship (bash prompt)
 	curl -fsSL https://starship.rs/install.sh | bash;
+
+	# install poetry (python dependency manager)
+	curl -sSL https://install.python-poetry.org | python3 -
 
 .PHONY: shellcheck
 shellcheck: ## Run the shellcheck tests on the scripts
