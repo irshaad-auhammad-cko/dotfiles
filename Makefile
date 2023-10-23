@@ -21,6 +21,7 @@ dotfiles: ## Install dotfiles
 	git update-index --skip-worktree $(CURDIR)/.gitconfig;
 	mkdir -p $(HOME)/.config;
 	ln -snf $(CURDIR)/.config/starship.toml $(HOME)/.config/starship.toml;
+	ln -snf $(CURDIR)/.config/nvim $(HOME)/.config/nvim;
 
 .PHONY: setup
 setup: ## Install homebrew, starship and configure vim
