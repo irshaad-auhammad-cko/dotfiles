@@ -20,11 +20,11 @@ alias finder='open -a Finder ./'
 alias fzf="fzf --preview 'bat --color=always --style=numbers --line-range=:500 {}'"
 alias grep="rg"
 alias h='history'
-alias la="exa -abghHl --group-directories-first"
+alias la="eza -abghHl --group-directories-first"
 alias less='less -R'
 alias locale='locale -a | rg UTF-8'
-alias lr='exa -T -L 5 --git-ignore'
-alias lsd="exa -laDh"
+alias lr='eza -T -L 5 --git-ignore'
+alias lsd="eza -laDh"
 alias mkdir='mkdir -pv'
 alias mv='mv -i'
 alias p='pwd'
