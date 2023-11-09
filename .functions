@@ -100,13 +100,6 @@ fs() {
 	fi
 }
 
-# Use Git’s colored diff when available
-if hash git &>/dev/null ; then
-	diff() {
-		git diff --no-index --color-words "$@"
-	}
-fi
-
 # Get colors in manual pages
 man() {
 	env \
@@ -137,16 +130,6 @@ unidecode() {
 	# print a newline unless we’re piping the output to another program
 	if [ -t 1 ]; then
 		echo ""; # newline
-	fi
-}
-
-# Syntax-highlight JSON strings or files
-# Usage: `json '{"foo":42}'` or `echo '{"foo":42}' | json`
-json() {
-	if [ -t 0 ]; then # argument
-		python -mjson.tool <<< "$*" | pygmentize -l javascript
-	else # pipe
-		python -mjson.tool | pygmentize -l javascript
 	fi
 }
 
@@ -233,7 +216,7 @@ logout() {
 
 # List processes owned by an user
 myps() {
-    ps "$@" -u "$USER" -o pid,%cpu,%mem,start,time,bsdtime,command;
+    ps "$@" u "$USER" -o pid,%cpu,%mem,start,time,bsdtime,command;
 }
 
 # Open any file in MacOS Quicklook Preview
@@ -253,27 +236,25 @@ httpserver() {
 
 # Generate SSH RSA keys
 sshkeygen() {
-
 	echo "What's the name of the Key (no spaced please) ? ";
 	read -r name;
-
 	echo "What's the email associated with it? ";
 	read -r email;
 
-	ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/"$name" -C "$email"
+	ssh-keygen -t ed25519 -N "" -f ~/.ssh/"$name" -C "$email"
 	ssh-add ~/.ssh/"$name";
 	pbcopy < ~/.ssh/"$name".pub;
 
 	echo "SSH Key copied in your clipboard";
 }
 
-# `tre` is a shorthand for `tree` with hidden files and color enabled, ignoring
+# `tre` display a tree structure with hidden files and color enabled, ignoring
 # the `.git` directory, listing directories first. The output gets piped into
-# `less` with options to preserve color and line numbers, unless the output is
+# `bat` with options to preserve color and line numbers, unless the output is
 # small enough for one screen.
 tre() {
 	#tree -aC -I '.git|node_modules|bower_components' --dirsfirst "$@" | less -FRnX;
-	exa --tree -I '.git|node_modules' | less -FRnX;
+	eza --all --tree --color always --ignore-glob '.git|node_modules' --group-directories-first | bat;
 }
 
 ## hammer a service with curl for a given number of times
@@ -296,8 +277,8 @@ curlheader() {
     echo "curl -k -s -D - $1 -o /dev/null"
     curl -k -s -D - "$1" -o /dev/null:
   else
-    echo "curl -k -s -D - $2 -o /dev/null | grep $1:"
-    curl -k -s -D - "$2" -o /dev/null | grep "$1":
+    echo "curl -k -s -D - $2 -o /dev/null | rg $1:"
+    curl -k -s -D - "$2" -o /dev/null | rg "$1":
   fi
 }
 

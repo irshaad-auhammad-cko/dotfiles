@@ -2,75 +2,60 @@
 
 # Bash wrappers for docker run commands
 
-dcleanup() {
-    local containers
-    mapfile -t containers < <(docker ps -aq 2>/dev/null)
-    docker rm "${containers[@]}" 2>/dev/null
-    local volumes
-    mapfile -t volumes < <(docker ps --filter status=exited -q 2>/dev/null)
-    docker rm -v "${volumes[@]}" 2>/dev/null
-    local images
-    mapfile -t images < <(docker images --filter dangling=true -q 2>/dev/null)
-    docker rmi "${images[@]}" 2>/dev/null
+dcleanup(){
+	local containers
+	mapfile -t containers < <(docker ps -aq 2>/dev/null)
+	docker rm "${containers[@]}" 2>/dev/null
+	local volumes
+	mapfile -t volumes < <(docker ps --filter status=exited -q 2>/dev/null)
+	docker rm -v "${volumes[@]}" 2>/dev/null
+	local images
+	mapfile -t images < <(docker images --filter dangling=true -q 2>/dev/null)
+	docker rmi "${images[@]}" 2>/dev/null
 }
-del_stopped() {
-    local name=$1
-    local state
-    state=$(docker inspect --format "{{.State.Running}}" "$name" 2>/dev/null)
 
-    if [[ "$state" == "false" ]]; then
-        docker rm "$name"
-    fi
-}
-rmctr() {
-    # shellcheck disable=SC2068
-    docker rm -f $@ 2>/dev/null || true
-}
-relies_on() {
-    for container in "$@"; do
-        local state
-        state=$(docker inspect --format "{{.State.Running}}" "$container" 2>/dev/null)
+del_stopped(){
+	local name=$1
+	local state
+	state=$(docker inspect --format "{{.State.Running}}" "$name" 2>/dev/null)
 
-        if [[ "$state" == "false" ]] || [[ "$state" == "" ]]; then
-            echo "$container is not running, starting it for you."
-            $container
-        fi
-    done
+	if [[ "$state" == "false" ]]; then
+		docker rm "$name"
+	fi
+}
+
+rmctr(){
+	# shellcheck disable=SC2068
+	docker rm -f $@ 2>/dev/null || true
+}
+
+relies_on(){
+	for container in "$@"; do
+		local state
+		state=$(docker inspect --format "{{.State.Running}}" "$container" 2>/dev/null)
+
+		if [[ "$state" == "false" ]] || [[ "$state" == "" ]]; then
+			echo "$container is not running, starting it for you."
+			$container
+		fi
+	done
 }
 
 dps() {
 	docker ps -a --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}\t{{.ID}}'
 }
 
-cadvisor() {
-    docker run -d \
-        --restart always \
-        -v /:/rootfs:ro \
-        -v /var/run:/var/run:rw \
-        -v /sys:/sys:ro \
-        -v /var/lib/docker/:/var/lib/docker:ro \
-        -p 9090:8080 \
-        --name cadvisor \
-        google/cadvisor
-}
-
-consul() {
-    del_stopped consul
-
-    # check if we passed args and if consul is running
-    local state
-    state=$(docker inspect --format "{{.State.Running}}" consul 2>/dev/null)
-    if [[ "$state" == "true" ]] && [[ "$*" != "" ]]; then
-        docker exec -it consul consul "$@"
-        return 0
-    fi
+cockroachdb() {
+    del_stopped cockroachdb
+    docker volume create cockroach_data
 
     docker run -d \
         --restart always \
-        -p 8500:8500 \
-        -p 8600:8600/udp \
-        --name consul \
-        consul agent -server -ui -node=consul-server -bootstrap-expect=1 -datacenter=acme -client=0.0.0.0
+        -v cockroach_data:/cockroach/cockroach-data \
+        -p 26257:26257 \
+        -p 8080:8080 \
+        --name cockroachdb \
+        cockroachdb/cockroach start-single-node --insecure
 }
 
 mongodb() {
@@ -79,19 +64,19 @@ mongodb() {
     docker run -d \
         --restart always \
         -e MONGO_INITDB_ROOT_USERNAME=root \
-        -e MONGO_INITDB_ROOT_PASSWORD=admin -v $HOME/.mongodb_data:/data/db \
+        -e MONGO_INITDB_ROOT_PASSWORD=admin\
+        -v "$HOME"/.mongodb_data:/data/db \
         -p 27017:27017 \
         mongo
 }
 
 prometheus() {
     del_stopped prometheus
-
     docker volume create prometheus_data
 
     docker run -d \
-        --restart always
-    -v $HOME/.prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
+        --restart always \
+        -v "$HOME"/.prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
         -v prometheus_data:/prometheus \
         -p 9090:9090 \
         -config.file=/etc/prometheus/prometheus.yml \
@@ -103,7 +88,6 @@ prometheus() {
 
 redis() {
     del_stopped redis
-
     docker volume create redis_data
 
     docker run -d \
@@ -111,17 +95,5 @@ redis() {
         -v redis_data:/data \
         -p 6379:6379 \
         --name redis \
-        redis --save 60 1 --loglevel warning
-}
-
-sourcegraph() {
-    docker run -d \
-        --restart always \
-        -v $HOME/.sourcegraph/config:/etc/sourcegraph \
-        -v $HOME/.sourcegraph/data:/var/opt/sourcegraph \
-        -p 7080:7080 \
-        -p 127.0.0.1:3370:3370 \
-        --name sourcegraph \
-        --rm \
-        sourcegraph/server:3.16.0
+        redis-server --save 60 --requirepass "" --loglevel warning
 }
