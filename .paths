@@ -33,3 +33,6 @@ export PATH="$HOME/.docker/bin:$PATH"
 
 # Poetry
 export PATH="$HOME/.local/bin:$PATH"
+
+# Rust
+export PATH="$HOME/.cargo/bin:$PATH"
