@@ -327,10 +327,6 @@ sudo chflags uchg /private/var/vm/sleepimage
 # Computer name: [YOUR COMPUTER NAME]
 # [ ] Remote Apple events
 # [ ] Remote login
-sudo scutil --set ComputerName "ATHENA"
-sudo scutil --set HostName "ATHENA"
-sudo scutil --set LocalHostName "ATHENA"
-sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "0x6D746873"
 sudo systemsetup -setremoteappleevents off
 sudo systemsetup -setremotelogin off
 
