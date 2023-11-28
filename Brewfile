@@ -1,6 +1,7 @@
 tap "buo/cask-upgrade"
 tap "homebrew/bundle"
 tap "homebrew/cask-fonts"
+tap "isen-ng/dotnet-sdk-versions"
 
 cask_args appdir: "/Applications"
 
