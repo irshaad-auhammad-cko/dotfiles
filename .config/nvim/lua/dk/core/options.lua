@@ -28,6 +28,7 @@ opt.smartcase = true  -- If you include mixed case in your search, assumes you w
 
 -- Cursor line
 opt.cursorline = true -- Highlight the current cursor line
+opt.guicursor = "" -- Remove cursor style
 opt.scrolloff = 10    -- Make it so there are always ten lines below my cursor
 
 local set_cursorline = function(event, value, pattern)
