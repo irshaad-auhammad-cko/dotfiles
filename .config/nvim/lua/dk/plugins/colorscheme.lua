@@ -9,6 +9,9 @@ return {
         end,
         opts = {
             flavour = "mocha", -- latte, frappe, macchiato, mocha
+            background = {
+                dark = "mocha",
+            },
             integrations = {
                 alpha = true,
                 cmp = true,
