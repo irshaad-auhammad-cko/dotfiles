@@ -100,6 +100,12 @@ return {
             },
         })
 
+        -- Configure ruff-lsp
+        lspconfig.ruff_lsp.setup({
+            capabilities = capabilities,
+            on_attach = on_attach,
+        })
+
         -- Configure pyright
         lspconfig.pyright.setup({
             capabilities = capabilities,

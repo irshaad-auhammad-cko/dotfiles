@@ -27,6 +27,7 @@ return {
                 "gopls",
                 "lua_ls",
                 "pyright",
+                "ruff_lsp",
                 "rust_analyzer"
             },
             -- auto-install configured servers (with lspconfig)
@@ -36,12 +37,11 @@ return {
         -- List of tools/formatters/linters to install
         mason_tool_installer.setup({
             ensure_installed = {
-                "black",     -- Python formatter
                 "gofumpt",   -- Stricter Go formatter (gofmt)
                 "goimports", -- Go imports formatter
                 "isort",     -- Python imports formatter
                 "prettier",  -- Opiniated code formatter
-                "pylint",    -- Python linter
+                "ruff",      -- Python linter and formatter
                 "stylua",    -- Lua formatter
             },
         })
