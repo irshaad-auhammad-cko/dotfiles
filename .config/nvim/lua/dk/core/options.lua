@@ -25,10 +25,12 @@ opt.hlsearch = false  -- Do not highlight search terms
 opt.ignorecase = true -- Ignore case when searching
 opt.incsearch = true  -- Makes search act like search in modern browsers
 opt.smartcase = true  -- If you include mixed case in your search, assumes you want case-sensitive
+opt.grepformat = "%f:%l:%c:%m"
+opt.grepprg = "rg --vimgrep"
 
 -- Cursor line
 opt.cursorline = true -- Highlight the current cursor line
-opt.guicursor = "" -- Remove cursor style
+opt.guicursor = ""    -- Remove cursor style
 opt.scrolloff = 10    -- Make it so there are always ten lines below my cursor
 
 local set_cursorline = function(event, value, pattern)
