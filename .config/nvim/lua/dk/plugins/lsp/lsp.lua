@@ -100,6 +100,12 @@ return {
             },
         })
 
+        -- Configure csharp-language-server
+        lspconfig.csharp_ls.setup({
+            capabilities = capabilities,
+            on_attach = on_attach,
+        })
+
         -- Configure ruff-lsp
         lspconfig.ruff_lsp.setup({
             capabilities = capabilities,
