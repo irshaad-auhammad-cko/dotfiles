@@ -40,7 +40,7 @@ install: ## Install Homebrew packages, starship and poetry
 	curl -fsSL https://starship.rs/install.sh | sh;
 
 	# install poetry (python dependency manager)
-	curl -sSL https://install.python-poetry.org | python3 -
+	# curl -sSL https://install.python-poetry.org | python3 -
 
 .PHONY: test
 test: shellcheck ## Run shellcheck on all the scripts in the repo
