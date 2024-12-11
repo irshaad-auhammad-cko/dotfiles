@@ -1,30 +1,67 @@
 # Get editor completions based on the config schema
-"$schema" = 'https://starship.rs/config-schema.json'
+'$schema' = 'https://starship.rs/config-schema.json'
 
 # Inserts a blank line between shell prompts
 add_newline = true
 
-# Timeout for commands executed by starship (in milliseconds).
+# Timeout for starship to execute command (ms)
 command_timeout = 1000
 
 [aws]
 disabled = true
 
 [buf]
-symbol = '🦬 '
+symbol = ' '
+
+[c]
+symbol = ' '
 
 # Replace the '❯' symbol in the prompt with '➜'
 [character]
 success_symbol = '[➜](bold green)'
+error_symbol = '[✗](bold red)'
 
 [docker_context]
+symbol = ' '
 only_with_files = true
+
+[git_branch]
+symbol = ' '
+
+[golang]
+symbol = ' '
 
 [hostname]
 format = '[$ssh_symbol](bold blue) on [$hostname](bold red) '
 ssh_only = true
 
-[sudo]
-style = 'bold green'
-symbol = '👩‍💻 '
+[lua]
+symbol = ' '
+
+[memory_usage]
+symbol = ' '
+
+[os]
 disabled = false
+
+[os.symbols]
+Alpine = ' '
+Arch = ' '
+Debian = ' '
+Fedora = ' '
+Linux = ' '
+Macos = ' '
+
+[python]
+symbol = ' '
+
+[status]
+disabled = false
+style = 'red'
+symbol = ' '
+not_executable_symbol = '🚫'
+not_found_symbol = ' '
+sigint_symbol = ' '
+signal_symbol = ' '
+format = '[\[ $symbol$common_meaning$signal_name$maybe_int \]]($style) '
+map_symbol = true

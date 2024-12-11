@@ -90,3 +90,38 @@ alias sniff="sudo ngrep -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"
 
 # Lock the screen when away from keyboard
 alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
+
+# navigation
+alias gocd='~/code/go'
+alias netcd='~/code/dotnet'
+
+alias issuing='~/code/dotnet/issuing'
+
+alias proto='~/code/dotnet/issuing/proto'
+
+alias auth='~/code/dotnet/issuing/authorization'
+alias bifrost='~/code/dotnet/issuing/mastercard-bifrost'
+alias hsm-proxy='~/code/dotnet/issuing/hsm-proxy'
+alias ppapi='~/code/dotnet/issuing/processing-profile'
+
+alias file-sync='~/code/dotnet/issuing/clearing-file-sync'
+alias parser='~/code/dotnet/issuing/clearing-parser'
+alias processor='~/code/dotnet/issuing/clearing-processor'
+
+alias processing-iac='~/code/dotnet/issuing/processing-iac'
+alias scheme-iac='~/code/dotnet/issuing/scheme-iac'
+alias vault='~/code/dotnet/issuing/vault'
+
+alias openssl='/opt/homebrew/Cellar/openssl@1.1/1.1.1t/bin/openssl'
+alias rider='open -na "Rider.app" --args'
+
+# SSH into EC2s
+alias ssh-qa='ssh -i "~/.ssh/qa.pem"'
+alias ssh-prod='ssh -i "~/.ssh/prod.pem"'
+
+# DBT
+alias dbtmode='~/code/dotnet/issuing/dbt-issuing && source ~/code/dbt/dbt_env/venv/bin/activate && r'
+alias dbtnuke='dbt run-operation setup_database --target ci --vars "{ 'drop': true }"'
+alias dbtrecreate='dbtnuke && dbt run-operation setup_database --target ci'
+alias dbtrefresh='dbt run --full-refresh --target ci'
+alias dbtlint='sqlfluff lint models --dialect snowflake'
