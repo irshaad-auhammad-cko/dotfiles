@@ -390,60 +390,66 @@ ghapprove(){
 	gh pr review $1 --approve;
 }
 
+ghemptycommit(){
+	git commit --allow-empty -m "Trigger CI" && git push
+}
+
 awscli(){
 	domain=checkout.okta.com
 	okta_app=0oar3nsvk7VtIvsL3357
 	aws_okta_app=0oa423kknpZCS07GJ357
+	environment=$1
+	default_profile="default"
+	profile="${2:-$default_profile}"
 
-	echo "
-	1- Playground
-	2- Dev
-	3- QA
-	4- Sbox
-	5- Prod
-	6- Management
-	"
-
-	echo -n "Which account would you like to connect to? "
-	read account_id_number
-
-	account_id=0
-
-	case $account_id_number in
-  	1)
+	case $environment in
+  	play)
 		echo "Playground"
     		account_id=528130383285
+			role_name=cko_issuing_infrastructure
     	;;
-  	2)
+  	dev)
     		echo "Dev"
     		account_id=851429951072
+			role_name=cko_issuing_engineer
     	;;
-  	3)
+  	qa)
     		echo "QA"
     		account_id=711533748762
+			role_name=cko_issuing_infrastructure
     	;;
-  	4)
+  	sbox)
     		echo "Sbox"
     		account_id=686496747715
+			role_name=cko_issuing_infrastructure
     	;;
-  	5)
+  	prod)
     		echo "Prod"
     		account_id=851392519502
+			role_name=cko_issuing_engineer
     	;;
-  	6)
+  	mgmt)
     		echo "Management"
     		account_id=791259062566
+			role_name=cko_issuing_engineer
     	;;
   	*)
-    		echo "Unknown account id. Defaulting to Management..."
-    		account_id=791259062566
-			account_id_number=6
+    		echo "Unknown account id. Valid environments: "dev, qa, sbox, prod, mgmt, play". Exiting..."
+			return
     	;;
 	esac
 
-	okta-aws-cli --org-domain $domain --oidc-client-id $okta_app --aws-acct-fed-app-id $aws_okta_app -b -z -s 43200 -i arn:aws:iam::$account_id:saml-provider/okta;
+	okta-aws-cli --org-domain $domain \
+	--oidc-client-id $okta_app \
+	--aws-acct-fed-app-id $aws_okta_app \
+	-b \
+	-z \
+	-r arn:aws:iam::$account_id:role/$role_name \
+	-s 43200 \
+	-i arn:aws:iam::$account_id:saml-provider/okta \
+	--profile $profile;
 
-	if [ $account_id_number -eq 6 ]
+	if [ $account_id -eq "791259062566" ]
 	then
 		echo "Logging into AWS CodeArtifact...";
 		aws codeartifact login --region eu-west-1 --tool dotnet --repository cko-packages --domain cko-packages;
@@ -454,3 +460,130 @@ awscli(){
 	fi
 }
 
+
+awscli-gen3(){
+	domain=checkout.okta.com
+	okta_app=0oar3nsvk7VtIvsL3357
+	aws_okta_app=0oaricq7oliS1Yb8G357
+	environment=$1
+	default_profile="default-gen3"
+	profile="${2:-$default_profile}"
+
+	case $environment in
+	# Payments
+	payments-qa|pay-qa)
+		echo "GEN3: Payments QA"
+		account_id=610519500328
+		role_name=breakglass
+		;;
+	payments-sbox|pay-sbox)
+		echo "GEN3: Payments Sbox"
+		account_id=190855935101
+		role_name=breakglass-readonly
+		;;
+	payments-prod|pay-prod)
+		echo "GEN3: Payments Prod"
+		account_id=222224878537
+		role_name=breakglass-readonly
+		;;
+	# Card Management
+	card-management-qa|cm-qa)
+		echo "GEN3: Card Management QA"
+		account_id=725601752007
+		role_name=breakglass
+		;;
+	card-management-sbox|cm-sbox)
+		echo "GEN3: Card Management Sbox"
+		account_id=211175818313
+		role_name=breakglass-readonly
+		;;
+	card-management-prod|cm-prod)
+		echo "GEN3: Card Management Prod"
+		account_id=194908889681
+		role_name=breakglass-readonly
+		;;
+	# Finance
+	finance-qa)
+		echo "GEN3: Finance QA"
+		account_id=491243661479
+		role_name=breakglass
+		;;
+	finance-sbox)
+		echo "GEN3: Finance Sbox"
+		account_id=646715757636
+		role_name=breakglass-readonly
+		;;
+	finance-prod)
+		echo "GEN3: Finance Prod"
+		account_id=096305373136
+		role_name=breakglass-readonly
+		;;
+	# User Interfaces
+	user-interfaces-qa|ui-qa)
+		echo "GEN3: User Interfaces QA"
+		account_id=963947739425
+		role_name=breakglass
+		;;
+	user-interfaces-sbox|ui-sbox)
+		echo "GEN3: User Interfaces Sbox"
+		account_id=772266538287
+		role_name=breakglass-readonly
+		;;
+	user-interfaces-prod|ui-prod)
+		echo "GEN3: User Interfaces Prod"
+		account_id=964217566234
+		role_name=breakglass-readonly
+		;;
+	# Shared
+	artifact)
+		echo "GEN3: Artifact"
+		account_id=891377407345
+		role_name=breakglass-readonly
+		;;
+	*)
+		echo "Unknown environment: '$environment'. Valid environments:"
+		echo "  payments-{qa,sbox,prod} (or pay-*)"
+		echo "  card-management-{qa,sbox,prod} (or cm-*)"
+		echo "  finance-{qa,sbox,prod}"
+		echo "  user-interfaces-{qa,sbox,prod} (or ui-*)"
+		echo "  artifact"
+		return 1
+		;;
+	esac
+
+	okta-aws-cli --org-domain $domain \
+	--oidc-client-id $okta_app \
+	--aws-acct-fed-app-id $aws_okta_app \
+	-b \
+	-z \
+	-r arn:aws:iam::$account_id:role/$role_name \
+	-s 43200 \
+	-i arn:aws:iam::$account_id:saml-provider/OktaIDP \
+	--profile $profile;
+}
+
+bonjour(){
+	awscli mgmt &
+	open https://checkout.cloudflareaccess.com/cdn-cgi/access/refresh-identity &
+	open https://checkout.okta.com/app/UserHome
+}
+
+function bqrefresh {
+	cd ~/code/dotnet/issuing/gcp-dbt-issuing/gcp-dbt-issuing-payments
+	# Execute the deployment macros first
+	# dbt run-operation deploy_adjust_settlement_date_using_cycle_number --target ci
+	# dbt run-operation deploy_adjust_settlement_date_using_cycle_number_with_settlement_holidays --target ci
+	# dbt run-operation deploy_adjust_settlement_date_using_date --target ci
+	# Then run the models
+	dbt run --full-refresh --target local --show-all-deprecations
+}
+
+function bqincrefresh {
+	cd ~/code/dotnet/issuing/gcp-dbt-issuing/gcp-dbt-issuing-payments
+	# Execute the deployment macros first
+	dbt run-operation deploy_adjust_settlement_date_using_cycle_number --target local
+	dbt run-operation deploy_adjust_settlement_date_using_cycle_number_with_settlement_holidays --target local
+	dbt run-operation deploy_adjust_settlement_date_using_date --target local
+	# Then run the models
+	dbt run --target local --show-all-deprecations
+}

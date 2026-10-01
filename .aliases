@@ -125,3 +125,8 @@ alias dbtnuke='dbt run-operation setup_database --target ci --vars "{ 'drop': tr
 alias dbtrecreate='dbtnuke && dbt run-operation setup_database --target ci'
 alias dbtrefresh='dbt run --full-refresh --target ci'
 alias dbtlint='sqlfluff lint models --dialect snowflake'
+
+# GCP - BQ https://checkout.atlassian.net/wiki/spaces/ICPS/pages/7490109745/BigQuery#Useful-commands
+alias bqmode='~/code/dotnet/issuing/gcp-dbt-issuing/gcp-dbt-issuing-payments && source venv/bin/activate && dbt debug'
+alias bqauth='gcloud auth login --enable-gdrive-access --update-adc --project=$LOCAL_COMPUTE_PROJECT'
+alias bqchange='~/code/dotnet/issuing/gcp-dbt-issuing/gcp-dbt-issuing-payments && source setup/set_envs && sh setup/local_setup.sh'

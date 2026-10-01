@@ -52,3 +52,10 @@ eval "$(starship init bash)"
 # pyenv
 eval "$(pyenv init -)"
 # eval "$(pyenv virtualenv-init -)"
+
+# Add Docker Desktop for Mac (docker)
+export PATH="$PATH:/Applications/Docker.app/Contents/Resources/bin"
+
+# AWS Agent Toolkit CLI (custom build) + corporate CA bundle
+export PATH="$HOME/.local/bin:$PATH"
+export AWS_CA_BUNDLE="$HOME/.aws/combined-ca.pem"
