@@ -406,6 +406,7 @@ dev|Gen2 Dev|851429951072|cko_issuing_engineer|okta|$gen2_app|default
 qa|Gen2 QA|711533748762|cko_issuing_infrastructure|okta|$gen2_app|default
 sbox|Gen2 Sbox|686496747715|cko_issuing_infrastructure|okta|$gen2_app|default
 prod|Gen2 Prod|851392519502|cko_issuing_engineer|okta|$gen2_app|default
+prod-infra|Gen2 Prod|851392519502|cko_issuing_infrastructure|okta|$gen2_app|default
 mgmt|Gen2 Management|791259062566|cko_issuing_engineer|okta|$gen2_app|default
 payments-qa,pay-qa|Gen3 Payments QA|610519500328|breakglass|OktaIDP|$gen3_app|default-gen3
 payments-sbox,pay-sbox|Gen3 Payments Sbox|190855935101|breakglass-readonly|OktaIDP|$gen3_app|default-gen3
